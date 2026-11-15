@@ -18,8 +18,7 @@ Standard hash algorithms used in digital forensics:
   - SHA-256 (256-bit): Current standard for evidence integrity in most labs.
   - SHA-512 (512-bit): Highest assurance; used for critical evidence.
 
-Author: Edward Marez
-License: MIT
+
 """
 
 import hashlib

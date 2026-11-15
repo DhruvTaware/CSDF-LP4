@@ -48,8 +48,6 @@ Directory Entry (32 bytes):
   Offset 26-27:  First cluster low
   Offset 28-31:  File size
 
-Author: Edward Marez
-License: MIT
 """
 
 import struct

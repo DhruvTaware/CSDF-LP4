@@ -20,8 +20,6 @@ Timeline analysis considerations:
   - Discrepancies between $SI and $FN timestamps are a red flag
   - UTC timezone should be assumed unless locale evidence exists
 
-Author: Edward Marez
-License: MIT
 """
 
 import csv

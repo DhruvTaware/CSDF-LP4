@@ -11,8 +11,6 @@ Images created:
 
 All binary structures are constructed using struct.pack at exact byte offsets.
 
-Author: Edward Marez
-License: MIT
 """
 
 import struct
@@ -576,25 +574,9 @@ def make_ntfs_mft_record(
 # ---------------------------------------------------------------------------
 # IMAGE 1: FAT32
 # ---------------------------------------------------------------------------
-
 def create_fat32_image(output_path: str = None) -> str:
     """
     Create a 2 MB FAT32 disk image with MBR.
-
-    Structure:
-      - Sector 0:       MBR with one FAT32 partition (type 0x0B)
-      - Sector 2048:    FAT32 partition start
-        - Sector 2048:  FAT32 boot sector
-        - Sector 2052:  FAT (2 sectors)
-        - Sector 2054:  FAT copy 2
-        - Sector 2056:  Root directory (cluster 2)
-        - Sector 2057:  File data clusters (clusters 3-7)
-
-    Files created:
-      - REPORT.TXT    (active, cluster 3)
-      - EVIDENCE.BIN  (active, cluster 4-5)
-      - NOTES.TXT     (deleted, cluster 6 — now free)
-      - PASSWD.TXT    (deleted, cluster 7 — overwritten)
     """
     if output_path is None:
         output_path = str(SAMPLE_DIR / "demo_fat32.dd")
@@ -633,38 +615,24 @@ def create_fat32_image(output_path: str = None) -> str:
     part_off = PARTITION_LBA * SECTOR_SIZE
     image[part_off:part_off + 512] = bs
 
-    # Cluster layout (relative to data region):
-    # Data region start = PARTITION_LBA + RESERVED_SECTORS + NUM_FATS * SECTORS_PER_FAT
-    data_start_lba = PARTITION_LBA + RESERVED_SECTORS + NUM_FATS * SECTORS_PER_FAT  # 2048 + 4 + 4 = 2056
-    # cluster 2 = root dir  -> sector data_start_lba + 0
-    # cluster 3 = REPORT.TXT
-    # cluster 4 = EVIDENCE.BIN part 1
-    # cluster 5 = EVIDENCE.BIN part 2
-    # cluster 6 = NOTES.TXT (deleted, cluster freed -> FAT entry = 0)
-    # cluster 7 = PASSWD.TXT (deleted, cluster reallocated -> FAT entry = EOC in a new chain)
+    data_start_lba = PARTITION_LBA + RESERVED_SECTORS + NUM_FATS * SECTORS_PER_FAT
 
     def cluster_sector(cluster):
         return data_start_lba + (cluster - ROOT_CLUSTER)
 
     # --- FAT ---
-    # Build cluster chains
-    # chain for EVIDENCE.BIN: cluster 4 -> 5 -> EOC
     fat_data = make_fat32_fat(
         total_fat_entries=128,
         cluster_chains={
             ROOT_CLUSTER: [ROOT_CLUSTER],   # Root dir: single cluster
             3: [3],                          # REPORT.TXT: single cluster
             4: [4, 5],                       # EVIDENCE.BIN: 2 clusters
-            # Cluster 6: free (NOTES.TXT deleted, data might be recoverable)
-            # Cluster 7: reallocated to a new fake chain (PASSWD.TXT data overwritten)
             7: [7],                          # "New" file occupying cluster 7
         },
-        free_clusters=[6],  # Cluster 6 is free
+        free_clusters=[6, 8],                # <--- ADDED FOR VIVA (Cluster 8 is free)
     )
     fat_off = part_off + RESERVED_SECTORS * SECTOR_SIZE
-    # Write FAT 1
     image[fat_off:fat_off + len(fat_data)] = fat_data
-    # Write FAT 2 (copy)
     fat2_off = fat_off + SECTORS_PER_FAT * SECTOR_SIZE
     image[fat2_off:fat2_off + len(fat_data)] = fat_data
 
@@ -672,7 +640,6 @@ def create_fat32_image(output_path: str = None) -> str:
     root_off = cluster_sector(ROOT_CLUSTER) * SECTOR_SIZE
 
     entries = bytearray()
-    # . and .. entries
     entries += make_dot_entries(ROOT_CLUSTER, ROOT_CLUSTER, dt_2026_01)
 
     # REPORT.TXT (active)
@@ -683,7 +650,7 @@ def create_fat32_image(output_path: str = None) -> str:
     )
 
     # EVIDENCE.BIN (active, 2 clusters)
-    evidence_size = 600  # Needs 2 sectors (512 * 2 > 600)
+    evidence_size = 600
     entries += make_fat32_dir_entry(
         "EVIDENCE", "BIN", 0x20, 4, evidence_size,
         dt_2026_02, dt_2026_02, dt_2026_02
@@ -704,31 +671,38 @@ def create_fat32_image(output_path: str = None) -> str:
         deleted=True
     )
 
+    # <--- ADDED FOR VIVA: VIVA.TXT (DELETED — cluster 8 is free, recoverable)
+    viva_content = b"CSDF External Viva Sample File\n"
+    entries += make_fat32_dir_entry(
+        "SIRTEST", "TXT", 0x20, 8, len(viva_content),
+        dt_2026_03, dt_2026_03, dt_2026_03,
+        deleted=True
+    )
+
     image[root_off:root_off + len(entries)] = entries
 
     # --- File Data ---
-    # REPORT.TXT at cluster 3
     clus3_off = cluster_sector(3) * SECTOR_SIZE
     image[clus3_off:clus3_off + len(report_content)] = report_content
 
-    # EVIDENCE.BIN data at clusters 4-5
     clus4_off = cluster_sector(4) * SECTOR_SIZE
-    evidence_data = bytes(range(256)) * 3  # 768 bytes of known pattern
+    evidence_data = bytes(range(256)) * 3
     image[clus4_off:clus4_off + 512] = evidence_data[:512]
     clus5_off = cluster_sector(5) * SECTOR_SIZE
     image[clus5_off:clus5_off + len(evidence_data) - 512] = evidence_data[512:]
 
-    # NOTES.TXT data at cluster 6 (still present, cluster is free)
     clus6_off = cluster_sector(6) * SECTOR_SIZE
     image[clus6_off:clus6_off + len(notes_content)] = notes_content
 
-    # Cluster 7 is occupied by a new file (overwriting old PASSWD.TXT data)
     clus7_off = cluster_sector(7) * SECTOR_SIZE
     image[clus7_off:clus7_off + 512] = b"New data occupying reallocated cluster 7\n" + b"\x00" * 471
 
+    # <--- ADDED FOR VIVA: Write VIVA.TXT content at cluster 8
+    clus8_off = cluster_sector(8) * SECTOR_SIZE
+    image[clus8_off:clus8_off + len(viva_content)] = viva_content
+
     Path(output_path).write_bytes(bytes(image))
     return output_path
-
 
 # ---------------------------------------------------------------------------
 # IMAGE 2: GPT

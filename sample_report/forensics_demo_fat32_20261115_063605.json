@@ -1,54 +1,53 @@
 {
   "report_metadata": {
     "generator": "DiskForensics v1.0.0",
-    "author": "Edward Marez",
-    "image_path": "sample_images/demo_fat32.dd",
+    "image_path": "sample_images\\demo_fat32.dd",
     "image_filename": "demo_fat32.dd",
     "image_size_bytes": 2097152,
     "image_size_human": "2.0 MB",
-    "generated_at": "2026-03-31T17:17:03.371978+00:00",
+    "generated_at": "2026-11-15T06:36:05.696578+00:00",
     "partition_scheme": "MBR"
   },
   "hashes": {
-    "image_path": "sample_images/demo_fat32.dd",
+    "image_path": "sample_images\\demo_fat32.dd",
     "image_size_bytes": 2097152,
     "image_size_human": "2.0 MB",
-    "computed_at": "2026-03-31T17:17:03.371994+00:00",
+    "computed_at": "2026-11-15T06:36:05.696596+00:00",
     "full_image_hashes": [
       {
         "target": "Full Image (demo_fat32.dd)",
         "algorithm": "md5",
-        "digest": "a05e868f9aff0cb24b38f12c4269fb20",
+        "digest": "d484bdde0412c8a3d83624be46c4c044",
         "start_offset": 0,
         "length_bytes": 2097152,
         "size_human": "2.0 MB",
-        "computed_at": "2026-03-31T17:17:03.375390+00:00",
+        "computed_at": "2026-11-15T06:36:05.699740+00:00",
         "elapsed_seconds": 0.003,
-        "throughput_mbps": 597.99
+        "throughput_mbps": 648.66
       },
       {
         "target": "Full Image (demo_fat32.dd)",
         "algorithm": "sha256",
-        "digest": "c36f7038559310c56b4078403ff1129b6761c66ffed2b03e7817c2fd37be3048",
+        "digest": "e39334ecdeabafc8794d4286bf28f4cacf9eecfe477b0b7cacf4f40c1dfb72c9",
         "start_offset": 0,
         "length_bytes": 2097152,
         "size_human": "2.0 MB",
-        "computed_at": "2026-03-31T17:17:03.377398+00:00",
+        "computed_at": "2026-11-15T06:36:05.701483+00:00",
         "elapsed_seconds": 0.002,
-        "throughput_mbps": 1017.65
+        "throughput_mbps": 1188.85
       }
     ],
     "partition_hashes": [
       {
         "target": "Partition 1 (FAT32, LBA 2048-4095)",
         "algorithm": "sha256",
-        "digest": "7dae27b740800827f4fc52f14fb93ac0c93a03c39b19863306e85fda45cbca60",
+        "digest": "57b11b411e545b2820bb31fbbbca6c28dd9321e61b07723b7ee10f65dceea933",
         "start_offset": 1048576,
         "length_bytes": 1048576,
         "size_human": "1.0 MB",
-        "computed_at": "2026-03-31T17:17:03.378751+00:00",
+        "computed_at": "2026-11-15T06:36:05.702549+00:00",
         "elapsed_seconds": 0.001,
-        "throughput_mbps": 983.68
+        "throughput_mbps": 1421.26
       }
     ]
   },
@@ -91,7 +90,7 @@
       "data_start_sector": 8
     },
     "file_count": 2,
-    "deleted_count": 2,
+    "deleted_count": 3,
     "files": [
       {
         "name": "REPORT.TXT",
@@ -150,15 +149,29 @@
         "created": "2025-12-05T23:59:58",
         "modified": "2025-12-05T23:59:58",
         "accessed": "2025-12-05T00:00:00"
+      },
+      {
+        "name": "_IRTEST.TXT",
+        "name_short": "_IRTEST.TXT",
+        "path": "/_IRTEST.TXT",
+        "is_directory": false,
+        "is_deleted": true,
+        "file_size": 31,
+        "size_human": "31.0 B",
+        "first_cluster": 8,
+        "attributes": "A",
+        "created": "2026-03-01T10:15:00",
+        "modified": "2026-03-01T10:15:00",
+        "accessed": "2026-03-01T00:00:00"
       }
     ]
   },
   "recovery": [
     {
       "filesystem": "FAT32",
-      "total_deleted": 2,
-      "likely_recoverable": 1,
-      "scan_notes": "FAT32 recovery: 2 deleted entries found. Note: First character of each filename is replaced with '_' (original unknown).",
+      "total_deleted": 3,
+      "likely_recoverable": 2,
+      "scan_notes": "FAT32 recovery: 3 deleted entries found. Note: First character of each filename is replaced with '_' (original unknown).",
       "recovered_files": [
         {
           "filesystem": "FAT32",
@@ -187,6 +200,20 @@
           "created": "2025-12-05T23:59:58",
           "modified": "2025-12-05T23:59:58",
           "accessed": "2025-12-05T00:00:00"
+        },
+        {
+          "filesystem": "FAT32",
+          "filename": "_IRTEST.TXT",
+          "filename_partial": true,
+          "is_directory": false,
+          "file_size": 31,
+          "size_human": "31.0 B",
+          "first_cluster": 8,
+          "likely_recoverable": true,
+          "recovery_notes": "Starting cluster 8 is free. Single-cluster file (31.0 B); likely fully recoverable.",
+          "created": "2026-03-01T10:15:00",
+          "modified": "2026-03-01T10:15:00",
+          "accessed": "2026-03-01T00:00:00"
         }
       ]
     }
@@ -305,11 +332,33 @@
     {
       "timestamp": "2026-03-01T00:00:00",
       "event_type": "FILE_ACCESSED",
+      "filename": "_IRTEST.TXT",
+      "path": "/_IRTEST.TXT",
+      "file_size": 31,
+      "filesystem": "FAT32",
+      "source": "Directory Entry (access)",
+      "is_deleted": true,
+      "extra": ""
+    },
+    {
+      "timestamp": "2026-03-01T00:00:00",
+      "event_type": "FILE_ACCESSED",
       "filename": "_OTES.TXT",
       "path": "/_OTES.TXT",
       "file_size": 50,
       "filesystem": "FAT32",
       "source": "Directory Entry (access)",
+      "is_deleted": true,
+      "extra": ""
+    },
+    {
+      "timestamp": "2026-03-01T10:15:00",
+      "event_type": "FILE_CREATED",
+      "filename": "_IRTEST.TXT",
+      "path": "/_IRTEST.TXT",
+      "file_size": 31,
+      "filesystem": "FAT32",
+      "source": "Directory Entry (create)",
       "is_deleted": true,
       "extra": ""
     },
@@ -327,6 +376,17 @@
     {
       "timestamp": "2026-03-01T10:15:00",
       "event_type": "FILE_DELETED",
+      "filename": "_IRTEST.TXT",
+      "path": "/_IRTEST.TXT",
+      "file_size": 31,
+      "filesystem": "FAT32",
+      "source": "Directory Entry (0xE5 marker)",
+      "is_deleted": true,
+      "extra": "Approximate \u2014 timestamp is last-modified, not deletion time"
+    },
+    {
+      "timestamp": "2026-03-01T10:15:00",
+      "event_type": "FILE_DELETED",
       "filename": "_OTES.TXT",
       "path": "/_OTES.TXT",
       "file_size": 50,
@@ -334,6 +394,17 @@
       "source": "Directory Entry (0xE5 marker)",
       "is_deleted": true,
       "extra": "Approximate \u2014 timestamp is last-modified, not deletion time"
+    },
+    {
+      "timestamp": "2026-03-01T10:15:00",
+      "event_type": "FILE_MODIFIED",
+      "filename": "_IRTEST.TXT",
+      "path": "/_IRTEST.TXT",
+      "file_size": 31,
+      "filesystem": "FAT32",
+      "source": "Directory Entry (modify)",
+      "is_deleted": true,
+      "extra": ""
     },
     {
       "timestamp": "2026-03-01T10:15:00",

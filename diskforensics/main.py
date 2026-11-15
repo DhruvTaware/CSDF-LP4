@@ -14,8 +14,7 @@ Commands:
     report      Generate HTML/JSON forensic report
     demo        Run a full demonstration using synthetic disk images
 
-Author: Edward Marez
-License: MIT
+
 """
 
 import argparse

@@ -28,8 +28,7 @@ Partition Entry Layout (128 bytes each):
   Offset  48-55: Attribute flags
   Offset  56-127: Partition name (UTF-16LE, 72 bytes = 36 chars)
 
-Author: Edward Marez
-License: MIT
+
 """
 
 import struct

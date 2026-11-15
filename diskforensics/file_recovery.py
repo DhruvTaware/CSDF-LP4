@@ -25,8 +25,7 @@ NTFS deletion mechanics:
   The $STANDARD_INFORMATION and $FILE_NAME attributes are typically
   preserved in deleted MFT records, giving full timestamp evidence.
 
-Author: Edward Marez
-License: MIT
+
 """
 
 from dataclasses import dataclass, field

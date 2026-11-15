@@ -13,8 +13,7 @@ MBR Layout (512 bytes total):
   Bytes 494-509:  Partition Entry 4 (16 bytes)
   Bytes 510-511:  Boot signature (0x55, 0xAA)
 
-Author: Edward Marez
-License: MIT
+
 """
 
 import struct

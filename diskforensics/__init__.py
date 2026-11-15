@@ -1,8 +1,7 @@
 """
 DiskForensics - A professional disk image analysis tool for forensic investigations.
 
-Author: Edward Marez
-License: MIT
+
 Version: 1.0.0
 
 This package provides tools to:

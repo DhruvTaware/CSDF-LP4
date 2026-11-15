@@ -5,8 +5,7 @@ Provides sector-level and byte-level access to raw disk image files (dd/raw form
 Designed for large files — never loads the entire image into memory.
 Supports hashing while reading for chain-of-custody integrity verification.
 
-Author: Edward Marez
-License: MIT
+
 """
 
 import hashlib

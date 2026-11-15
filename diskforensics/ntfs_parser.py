@@ -53,8 +53,6 @@ Attribute Header (each attribute within MFT record):
     Offset 32-33: Data run offset
     ...
 
-Author: Edward Marez
-License: MIT
 """
 
 import struct
